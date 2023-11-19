@@ -9,12 +9,16 @@ ipcRenderer.on('rpc', async (event, data) => {
 
     for (const id in cache) {
       let mod = cache[id].exports;
+      if (!mod?.__esModule) {
+        continue;
+      }
       for (const prop in mod) {
+        if(!mod.hasOwnProperty(prop)) continue;
         const candidate = mod[prop];
-          if (candidate && candidate.register && candidate.wait) {
-            Dispatcher = candidate;
-            break;
-          }
+        if (candidate && candidate.register && candidate.wait) {
+          Dispatcher = candidate;
+          break;
+        }
       }
       if (Dispatcher) break; // make sure to exit outer loop as well
     }
